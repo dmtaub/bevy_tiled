@@ -148,10 +148,11 @@ impl Map {
             for tileset in map.tilesets.iter() {
                 let tile_width = tileset.tile_width as f32;
                 let tile_height = tileset.tile_height as f32;
+                let tile_space = tileset.spacing as f32;
                 let image = tileset.images.first().unwrap();
                 let texture_width = image.width as f32;
                 let texture_height = image.height as f32;
-                let columns = (texture_width / tile_width).floor();
+                let columns = (texture_width / (tile_width + tile_space)).floor();
 
                 let tile_path = image_folder.join(tileset.images.first().unwrap().source.as_str());
                 asset_dependencies.push(tile_path);
@@ -193,15 +194,15 @@ impl Map {
 
                                     // This calculation is much simpler we only care about getting the remainder
                                     // and multiplying that by the tile width.
-                                    let sprite_sheet_x: f32 = (tile % columns * tile_width).floor();
+                                    let sprite_sheet_x: f32 = (tile % columns * (tile_width + tile_space)).floor();
 
-                                    // Calculation here is (tile / columns).round_down * tile_height
+                                    // Calculation here is (tile / columns).round_down * (tile_space + tile_height)
                                     // Example: tile 30 / 28 columns = 1.0714 rounded down to 1 * 16 tile_height = 16 Y
                                     // which is the 2nd row in the sprite sheet.
                                     // Example2: tile 10 / 28 columns = 0.3571 rounded down to 0 * 16 tile_height = 0 Y
                                     // which is the 1st row in the sprite sheet.
                                     let sprite_sheet_y: f32 =
-                                        (tile / columns).floor() * tile_height;
+                                        (tile / columns).floor() + (tile_height + tile_space);
 
                                     // Calculate positions
                                     let (start_x, end_x, start_y, end_y) = match map.orientation {
