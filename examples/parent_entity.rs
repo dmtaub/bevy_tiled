@@ -49,7 +49,7 @@ fn move_parent_entity(
     mut query: Query<(&MapRoot, &mut Visible, &mut Transform)>,
 ) {
     for (_, mut _visible, mut transform) in query.iter_mut() {
-        let mut direction = Vec3::zero();
+        let mut direction = Vec3::ZERO;
 
         if keyboard_input.pressed(KeyCode::A) {
             direction -= Vec3::new(SCALE, 0.0, 0.0);

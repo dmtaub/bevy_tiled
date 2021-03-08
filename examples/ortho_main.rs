@@ -27,7 +27,7 @@ fn camera_movement(
     mut query: Query<(&Camera, &mut Transform)>,
 ) {
     for (_, mut transform) in query.iter_mut() {
-        let mut direction = Vec3::zero();
+        let mut direction = Vec3::ZERO;
         let scale = transform.scale.x;
 
         if keyboard_input.pressed(KeyCode::A) {
