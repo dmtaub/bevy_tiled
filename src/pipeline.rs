@@ -75,24 +75,22 @@ pub mod node {
     pub const TILE_MAP_CHUNK: &'static str = "tile_map_chunk";
 }
 
-pub trait TileMapRenderGraphBuilder {
-    fn add_tile_map_graph(&mut self, resources: &Resources) -> &mut Self;
-}
+pub(crate) fn add_tile_map_graph(world: &mut World) {
+    world.resource_scope(|mut pipelines: Mut<Assets<PipelineDescriptor>>, world| {
+        world.resource_scope(|mut shaders: Mut<Assets<Shader>>, world| {
+            let mut graph = world.get_resource_mut::<RenderGraph>().unwrap();
 
-impl TileMapRenderGraphBuilder for RenderGraph {
-    fn add_tile_map_graph(&mut self, resources: &Resources) -> &mut Self {
-        let mut pipelines = resources.get_mut::<Assets<PipelineDescriptor>>().unwrap();
-        let mut shaders = resources.get_mut::<Assets<Shader>>().unwrap();
-        pipelines.set_untracked(
-            TILE_MAP_PIPELINE_HANDLE,
-            build_tile_map_pipeline(&mut shaders),
-        );
-        self.add_system_node(
-            node::TILE_MAP_CHUNK,
-            RenderResourcesNode::<TileMapChunk>::new(true),
-        );
-        self.add_node_edge(node::TILE_MAP_CHUNK, base::node::MAIN_PASS)
-            .unwrap();
-        self
-    }
+            pipelines.set_untracked(
+                TILE_MAP_PIPELINE_HANDLE,
+                build_tile_map_pipeline(&mut shaders),
+            );
+            graph.add_system_node(
+                node::TILE_MAP_CHUNK,
+                RenderResourcesNode::<TileMapChunk>::new(true),
+            );
+            graph
+                .add_node_edge(node::TILE_MAP_CHUNK, base::node::MAIN_PASS)
+                .unwrap();
+        });
+    });
 }

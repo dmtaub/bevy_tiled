@@ -10,7 +10,7 @@ fn main() {
         .run();
 }
 
-fn setup(commands: &mut Commands, asset_server: Res<AssetServer>) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn(bevy_tiled_prototype::TiledMapBundle {
             map_asset: asset_server.load("iso-map.tmx"),
