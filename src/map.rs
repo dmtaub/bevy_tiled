@@ -515,15 +515,15 @@ impl Object {
         transform
     }
 
-    pub fn spawn<'a>(
+    pub fn spawn<'a, 'b>(
         &self,
-        commands: &'a mut Commands,
+        commands: &'a mut Commands<'b>,
         texture_atlas: Option<&Handle<TextureAtlas>>,
         map: &tiled::Map,
         map_handle: Handle<Map>,
         tile_map_transform: &Transform,
         debug_config: &DebugConfig,
-    ) -> Entity {
+    ) -> &'a mut Commands<'b> {
         if let Some(texture_atlas) = texture_atlas {
             let sprite_index = self.sprite_index.expect("missing sprite index");
             let tileset_gid = self.tileset_gid.expect("missing tileset");
@@ -580,9 +580,9 @@ impl Object {
                 })
         }
         .with(map_handle)
-        .with(self.clone())
-        .current_entity()
-        .unwrap()
+        .with(self.clone());
+
+        commands
     }
 
     pub fn dimensions(&self) -> Option<Vec2> {
@@ -697,8 +697,8 @@ pub fn process_loaded_tile_maps(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut map_events: EventReader<AssetEvent<Map>>,
-    mut ready_events: ResMut<Events<ObjectReadyEvent>>,
-    mut map_ready_events: ResMut<Events<MapReadyEvent>>,
+    mut ready_events: EventWriter<ObjectReadyEvent>,
+    mut map_ready_events: EventWriter<MapReadyEvent>,
     mut maps: ResMut<Assets<Map>>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -936,14 +936,19 @@ pub fn process_loaded_tile_maps(
                         .tileset_gid
                         .and_then(|tileset_gid| texture_atlas_map.get(&tileset_gid));
 
-                    let entity = object.spawn(
+                    let entity_option = object.spawn(
                         &mut commands,
                         atlas_handle,
                         &map.map,
                         map_handle.clone(),
                         &tile_map_transform,
                         &debug_config,
-                    );
+                    ).current_entity();
+
+                    if !entity_option.is_some() {
+                        continue;
+                    }
+                    let entity = entity_option.unwrap();
 
                     // when done spawning, fire event
                     let evt = ObjectReadyEvent {
