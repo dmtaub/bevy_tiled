@@ -213,9 +213,9 @@ impl Map {
                                                 tile_height,
                                             );
 
-                                            let start = Vec2::new(center.x, center.y - tile_height);
+                                            let start = Vec2::new(center.x, center.y - tile_height - tile_space);
 
-                                            let end = Vec2::new(center.x + tile_width, center.y);
+                                            let end = Vec2::new(center.x + tile_width + tile_space, center.y);
 
                                             (start.x, end.x, start.y, end.y)
                                         }
