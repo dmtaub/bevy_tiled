@@ -202,7 +202,7 @@ impl Map {
                                     // Example2: tile 10 / 28 columns = 0.3571 rounded down to 0 * 16 tile_height = 0 Y
                                     // which is the 1st row in the sprite sheet.
                                     let sprite_sheet_y: f32 =
-                                        (tile / columns).floor() + (tile_height + tile_space) - tile_space;
+                                        (tile / columns).floor() * (tile_height + tile_space) - tile_space;
 
                                     // Calculate positions
                                     let (start_x, end_x, start_y, end_y) = match map.orientation {
