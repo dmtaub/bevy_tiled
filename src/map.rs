@@ -15,7 +15,11 @@ use bevy::{
 };
 
 use crate::{loader::TiledMapLoader, TileMapChunk, TILE_MAP_PIPELINE_HANDLE};
+
+// objects include these by default for now
 pub use tiled::ObjectShape;
+pub use tiled::Properties;
+pub use tiled::PropertyValue;
 
 #[derive(Debug)]
 pub struct Tile {
@@ -414,6 +418,7 @@ impl ObjectGroup {
 #[derive(Debug, Clone)]
 pub struct Object {
     pub shape: tiled::ObjectShape,
+    pub props: tiled::Properties,
     pub position: Vec2,
     pub name: String,
     pub visible: bool,
@@ -427,6 +432,7 @@ impl Object {
         // println!("obj {} {}", original_object.name, original_object.visible.to_string());
         Object {
             shape: original_object.shape.clone(),
+            props: original_object.properties.clone(),
             gid: original_object.gid, // zero for most non-tile objects
             visible: original_object.visible,
             tileset_gid: None,
