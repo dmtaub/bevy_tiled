@@ -357,7 +357,7 @@ pub fn process_loaded_tile_maps(
                             // println!("Despawning previously-created mesh for this chunk");
                             for entity in entities.iter() {
                                 // println!("calling despawn on {:?}", entity);
-                                commands.entity(*entity).despawn();
+                                commands.entity(*entity).despawn_recursive();
                             }
                         });
                     let mut chunk_entities: Vec<Entity> = Default::default();
@@ -418,7 +418,7 @@ pub fn process_loaded_tile_maps(
                             // println!("Despawning previously-created object sprite");
                             for entity in entities.iter() {
                                 // println!("calling despawn on {:?}", entity);
-                                commands.entity(*entity).despawn();
+                                commands.entity(*entity).despawn_recursive();
                             }
                         });
                 }

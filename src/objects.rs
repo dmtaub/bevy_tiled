@@ -29,7 +29,7 @@ pub struct ObjectGroup {
 impl ObjectGroup {
     pub fn new_with_tile_ids(
         inner: &tiled::ObjectGroup,
-        tile_gids: &HashMap<u32, u32>,
+        tileset_gid_by_gid: &HashMap<u32, u32>,
         idx: usize,
     ) -> ObjectGroup {
         // println!("grp {}", inner.name.to_string());
@@ -39,7 +39,7 @@ impl ObjectGroup {
             objects: inner
                 .objects
                 .iter().enumerate()
-                .map(|(i, obj)| Object::new_with_tile_ids(obj, tile_gids, i, idx))
+                .map(|(i, obj)| Object::new_with_tile_ids(obj, tileset_gid_by_gid, i, idx))
                 .collect(),
         }
     }
@@ -86,17 +86,17 @@ impl Object {
 
     pub fn new_with_tile_ids(
         original_object: &tiled::Object,
-        tileset_id_by_gid: &HashMap<u32, u32>,
+        tileset_gid_by_gid: &HashMap<u32, u32>,
         idx: usize,
         grp_idx: usize,
     ) -> Object {
         // println!("obj {}", original_object.gid.to_string());
         let mut o = Object::new(original_object, grp_idx, idx);
-        o.set_tile_ids(tileset_id_by_gid);
+        o.set_tile_ids(tileset_gid_by_gid);
         o
     }
-    pub fn set_tile_ids(&mut self, tileset_id_by_gid: &HashMap<u32, u32>) {
-        self.tileset_gid = tileset_id_by_gid.get(&self.gid).cloned();
+    pub fn set_tile_ids(&mut self, tileset_gid_by_gid: &HashMap<u32, u32>) {
+        self.tileset_gid = tileset_gid_by_gid.get(&self.gid).cloned();
         self.sprite_index = self.tileset_gid.map(|first_gid| &self.gid - first_gid);
     }
 
