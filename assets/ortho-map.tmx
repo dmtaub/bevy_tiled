@@ -254,7 +254,7 @@
   <object id="6" name="guard" type="NPC" x="277" y="18">
    <polyline points="0,0 75,78 133,82 176,179 274,183"/>
   </object>
-  <object id="10" gid="282" x="413.333" y="225.333" width="16" height="16"/>
+  <object id="10" gid="282" x="406.833" y="231.833" width="22.5" height="22.5"/>
   <object id="11" gid="282" x="421.667" y="218" width="16" height="16"/>
   <object id="12" gid="2147483930" x="422.906" y="235.938" width="16" height="16"/>
   <object id="13" gid="282" x="5" y="70" width="16" height="16"/>

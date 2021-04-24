@@ -176,7 +176,7 @@ impl Object {
         let dimensions = self
             .dimensions()
             .expect("Don't know how to handle object without dimensions");
-    
+
         let mut new_entity_commands = if let Some(texture_atlas) = texture_atlas {
             let sprite_index = self.sprite_index.expect("missing sprite index");
             let tileset_gid = self.tileset_gid.expect("missing tileset");
@@ -191,7 +191,7 @@ impl Object {
             let object_tile = object_tileset.and_then(|ts| ts
                 .tiles.iter().find(|&tile| tile.id + ts.first_gid == self.gid)
             );
-            
+
             // use object dimensions and tile size to determine extra scale to apply for tile objects
             let tile_scale = if let Some(size) = object_tile_size {
                 Some((dimensions / size).extend(1.0))
@@ -219,10 +219,14 @@ impl Object {
                     for obj_grp in &tile.objectgroup {
                         for obj in &obj_grp.objects {
                             let marker_object = Object::new(obj, self.grp_idx, self.obj_idx);
-                            let mut embedded_object_transform = marker_object.transform_from_map(&map, &Transform::default(), None);
-                            // reset scale since it should already be accounted for by parent
-                            embedded_object_transform.scale = Vec3::splat(1.0);
-                            embedded_object_transform.translation = Vec3::new(obj.x, -obj.y, 0.0001);
+
+                            let mut embedded_object_transform = Transform::from_scale(Vec3::splat(1.0));
+                            embedded_object_transform.translation =
+                                Vec3::new(obj.x, -obj.y, 0.00005) +
+                                -Vec3::new(self.size.x, -self.size.y, 0.01) / 2.0 / tile_scale.unwrap_or(Vec3::splat(1.0)) +
+                                Vec3::new(obj.width, -obj.height, 0.01) / 2.0;
+
+                            let size  = marker_object.dimensions().expect("embedded object needs dimension");
 
                             builder.spawn_bundle(
                                 SpriteBundle {
@@ -230,7 +234,7 @@ impl Object {
                                         .material
                                         .clone()
                                         .unwrap_or_else(|| Handle::<ColorMaterial>::default()),
-                                    sprite: Sprite::new(marker_object.dimensions().expect("embedded object needs dimension")),
+                                    sprite: Sprite::new(size),
                                     transform:  embedded_object_transform,
                                     visible: Visible {
                                         is_visible: debug_config.enabled,
