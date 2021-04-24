@@ -1,6 +1,6 @@
 use bevy::{ecs::system::EntityCommands, prelude::*, utils::HashMap};
 
-use crate::{DebugConfig, Map};
+use crate::{DebugConfig, Map, loader::TiledMapLoader};
 
 trait ShallowClone<T> {
     fn shallow_clone(&self) -> Self;
@@ -67,7 +67,7 @@ impl Object {
         Object {
             shape: original_object.shape.clone(),
             props: original_object.properties.clone(),
-            gid: original_object.gid, // zero for most non-tile objects
+            gid: TiledMapLoader::remove_tile_flags(original_object.gid), // zero for most non-tile objects
             visible: original_object.visible,
             tileset_gid: None,
             sprite_index: None,
